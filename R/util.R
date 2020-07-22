@@ -31,8 +31,9 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' library("EpiModel")
-#' nw <- network.initialize(n = 100, directed = FALSE)
+#' nw <- network_initialize(100)
 #' formation <- ~edges
 #' target.stats <- 50
 #' coef.diss <- dissolution_coefs(dissolution = ~offset(edges), duration = 20)
@@ -40,17 +41,16 @@
 #'
 #' param <- param.net(inf.prob = 0.3)
 #' init <- init.net(i.num = 10)
-#' control <- control.net(type = "SI", nsteps = 100, nsims = 5, depend = TRUE)
+#' control <- control.net(type = "SI", nsteps = 100, nsims = 5, tergmLite = TRUE)
 #'
-#' # Full network structure after initialization
+#' # networkLite representation after initialization
+#' dat <- crosscheck.net(x, param, init, control)
 #' dat <- initialize.net(x, param, init, control)
-#'
-#' # networkLite representation used by tergmLite
-#' dat <- init_tergmLite(dat)
 #'
 #' # Conversion to networkLite class format
 #' nwl <- networkLite(dat$el[[1]], dat$attr)
 #' nwl
+#' }
 #'
 networkLite <- function(el, attr) {
   x <- list(el = el, attr = attr, gal = attributes(el))
@@ -59,6 +59,11 @@ networkLite <- function(el, attr) {
   if (is.null(x$gal$n)) {
     stop("networkLite constructor requires network size attribute.")
   }
+
+  ## for consistency with network,
+  ## we want x$gal$n to be of type
+  ## numeric, not integer
+  x$gal$n <- as.numeric(x$gal$n)
 
   # other common attributes default to FALSE
   if (is.null(x$gal$directed))  {

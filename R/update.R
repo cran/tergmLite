@@ -24,8 +24,9 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' library("EpiModel")
-#' nw <- network.initialize(n = 100, directed = FALSE)
+#' nw <- network_initialize(100)
 #' formation <- ~edges
 #' target.stats <- 50
 #' coef.diss <- dissolution_coefs(dissolution = ~offset(edges), duration = 20)
@@ -33,13 +34,11 @@
 #'
 #' param <- param.net(inf.prob = 0.3)
 #' init <- init.net(i.num = 10)
-#' control <- control.net(type = "SI", nsteps = 100, nsims = 5, depend = TRUE)
+#' control <- control.net(type = "SI", nsteps = 100, nsims = 5, tergmLite = TRUE)
 #'
-#' # Full network structure after initialization
+#' # networkLite representation after initialization
+#' dat <- crosscheck.net(x, param, init, control)
 #' dat <- initialize.net(x, param, init, control)
-#'
-#' # networkLite representation used by tergmLite
-#' dat <- init_tergmLite(dat)
 #'
 #' # Check current network size
 #' attributes(dat$el[[1]])$n
@@ -49,6 +48,7 @@
 #'
 #' # Check new network size
 #' attributes(dat$el[[1]])$n
+#' }
 #'
 add_vertices <- function(el, nv) {
   attributes(el)$n <- attributes(el)$n + nv
@@ -81,8 +81,10 @@ add_vertices <- function(el, nv) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' library("EpiModel")
-#' nw <- network.initialize(n = 100, directed = FALSE)
+#' set.seed(12345)
+#' nw <- network_initialize(100)
 #' formation <- ~edges
 #' target.stats <- 50
 #' coef.diss <- dissolution_coefs(dissolution = ~offset(edges), duration = 20)
@@ -90,27 +92,25 @@ add_vertices <- function(el, nv) {
 #'
 #' param <- param.net(inf.prob = 0.3)
 #' init <- init.net(i.num = 10)
-#' control <- control.net(type = "SI", nsteps = 100, nsims = 5, depend = TRUE)
+#' control <- control.net(type = "SI", nsteps = 100, nsims = 5, tergmLite = TRUE)
 #'
 #' # Set seed for reproducibility
 #' set.seed(123456)
 #'
-#' # Full network structure after initialization
+#' # networkLite representation structure after initialization
+#' dat <- crosscheck.net(x, param, init, control)
 #' dat <- initialize.net(x, param, init, control)
 #'
-#' # networkLite representation used by tergmLite
-#' dat <- init_tergmLite(dat)
-#'
-#' # Current edges include {1, 87}, {2, 33}, {4, 19}, and {5, 99}
-#' head(dat$el[[1]], 4)
+#' # Current edges
+#' head(dat$el[[1]], 20)
 #'
 #' # Remove nodes 1 and 2
 #' nodes.to.delete <- 1:2
 #' dat$el[[1]] <- delete_vertices(dat$el[[1]], nodes.to.delete)
 #'
-#' # Old nodes 1 and 2 removed, and old nodes 4 and 5 become nodes 2 and 3
-#' # with edges 19 and 99 also shifted down to 17 and 97
-#' head(dat$el[[1]], 4)
+#' # Newly permuted edges
+#' head(dat$el[[1]], 20)
+#' }
 #'
 delete_vertices <- function(el, vid) {
 
@@ -122,8 +122,6 @@ delete_vertices <- function(el, vid) {
     }
     if (nrow(new.el) > 0) {
       elv <- as.vector(new.el)
-      # shifted.elv <- vapply(1:length(elv),
-      #                       function(x) elv[x] - sum(elv[x] > vid), FUN.VALUE = integer(1))
       shifted.elv <- shiftVec(elv, vid)
       new.el <- matrix(shifted.elv, ncol = 2)
     }
