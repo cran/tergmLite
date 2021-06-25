@@ -1,10 +1,9 @@
 
-context("Test examples with EpiModel load")
 
 test_that("simulate_network", {
 
   library("EpiModel")
-  if (packageVersion("EpiModel") >= "2.0.0") {
+  if (packageVersion("EpiModel") >= "2.1.0") {
     # Set seed for reproducibility
     set.seed(1234)
 
@@ -28,25 +27,24 @@ test_that("simulate_network", {
     dat$el[[1]]
 
     # New network structure
-    dat$el[[1]] <- simulate_network(p = dat$p[[1]],
-                                    el = dat$el[[1]],
-                                    coef.form = dat$nwparam[[1]]$coef.form,
-                                    coef.diss = dat$nwparam[[1]]$coef.diss$coef.adj,
-                                    save.changes = TRUE)
+    dat$el[[1]] <- simulate_network(state = dat$p[[1]]$state,
+                                    coef = c(dat$nwparam[[1]]$coef.form,
+                                             dat$nwparam[[1]]$coef.diss$coef.adj),
+                                    control = dat$control$mcmc.control[[1]],
+                                    save.changes = TRUE)$el
     dat$el[[1]]
 
     # Specific changes listed under changes list
     #    (new edges: to = 1; dissolved edges: to = 0):
     attributes(dat$el[[1]])$changes
   }
-
 })
 
 
 test_that("simulate_ergm", {
 
   library("EpiModel")
-  if (packageVersion("EpiModel") >= "2.0.0") {
+  if (packageVersion("EpiModel") >= "2.1.0") {
     # Set seed for reproducibility
     set.seed(1234)
 
@@ -70,19 +68,18 @@ test_that("simulate_ergm", {
     dat$el[[1]]
 
     # New network structure (all edges are new)
-    dat$el[[1]] <- simulate_ergm(p = dat$p[[1]],
-                                 el = dat$el[[1]],
-                                 coef = dat$nwparam[[1]]$coef.form)
+    dat$el[[1]] <- simulate_ergm(state = dat$p[[1]]$state,
+                                 coef = dat$nwparam[[1]]$coef.form,
+                                 control = dat$control$mcmc.control[[1]])$el
     dat$el[[1]]
   }
-
 })
 
 
 test_that("init_tergmLite", {
 
   library("EpiModel")
-  if (packageVersion("EpiModel") >= "2.0.0") {
+  if (packageVersion("EpiModel") >= "2.1.0") {
     nw <- network_initialize(100)
     formation <- ~edges
     target.stats <- 50
@@ -108,14 +105,13 @@ test_that("init_tergmLite", {
     # ... and p (contains all relevant ERGM structural information for simulation)
     str(dat$p, max.level = 3)
   }
-
 })
 
 
 test_that("networkLite", {
 
   library("EpiModel")
-  if (packageVersion("EpiModel") >= "2.0.0") {
+  if (packageVersion("EpiModel") >= "2.1.0") {
     nw <- network_initialize(100)
     formation <- ~edges
     target.stats <- 50
@@ -134,14 +130,13 @@ test_that("networkLite", {
     nwl <- networkLite(dat$el[[1]], dat$attr)
     nwl
   }
-
 })
 
 
 test_that("updateModelTermInputs", {
 
   library("EpiModel")
-  if (packageVersion("EpiModel") >= "2.0.0") {
+  if (packageVersion("EpiModel") >= "2.1.0") {
     # Set seed for reproducibility
     set.seed(1234)
 
@@ -162,7 +157,7 @@ test_that("updateModelTermInputs", {
     str(dat, max.level = 1)
 
     # Examine the network list structure for nodefactor term
-    dat$p[[1]]$model.form$terms[[2]]
+    dat$p[[1]]$state$model$terms[[2]]
 
     # inputs vector corresponds to group attribute stored here
     dat$attr$group
@@ -176,16 +171,15 @@ test_that("updateModelTermInputs", {
     dat <- updateModelTermInputs(dat)
 
     # Check that network list structure for nodefactor term has been updated
-    dat$p[[1]]$model.form$terms[[2]]
+    dat$p[[1]]$state$model$terms[[2]]
   }
-
 })
 
 
 test_that("add_vertices", {
 
   library("EpiModel")
-  if (packageVersion("EpiModel") >= "2.0.0") {
+  if (packageVersion("EpiModel") >= "2.1.0") {
     nw <- network_initialize(100)
     formation <- ~edges
     target.stats <- 50
@@ -209,14 +203,13 @@ test_that("add_vertices", {
     # Check new network size
     attributes(dat$el[[1]])$n
   }
-
 })
 
 
 test_that("delete_vertices", {
 
   library("EpiModel")
-  if (packageVersion("EpiModel") >= "2.0.0") {
+  if (packageVersion("EpiModel") >= "2.1.0") {
     set.seed(12345)
     nw <- network_initialize(100)
     formation <- ~edges
@@ -245,5 +238,4 @@ test_that("delete_vertices", {
     # Newly permuted edges
     head(dat$el[[1]], 20)
   }
-
 })
