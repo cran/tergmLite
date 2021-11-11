@@ -4,8 +4,8 @@
 #' \tabular{ll}{
 #'    Package: \tab tergmLite\cr
 #'    Type: \tab Package\cr
-#'    Version: \tab 2.5.0\cr
-#'    Date: \tab 2021-06-24\cr
+#'    Version: \tab 2.5.5\cr
+#'    Date: \tab 2021-11-11\cr
 #'    License: \tab GPL-3\cr
 #'    LazyLoad: \tab yes\cr
 #' }
@@ -51,6 +51,7 @@
 #' @importFrom statnet.common term.list.formula NVL set.control.class trim_env check.control.class
 #'                            append_rhs.formula nonsimp_update.formula
 #' @importFrom methods is
+#' @importFrom networkDynamic network.collapse
 #'
 #' @docType package
 #' @keywords package
